@@ -1,0 +1,56 @@
+
+
+<launch>
+ <arg name="model" default="$(env TURTLEBOT3_MODEL" doc="model type [burger, waffle, waffle_pi]"/>
+ <!-- TurtleBot3 -->
+  <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">   
+	<!--    <arg name="model" value="$(arg model)" /> -->
+   </include> 
+
+
+
+   <node pkg="nodelet" type="nodelet" name="rgbd_sync" args="standalone rtabmap_ros/rgbd_sync" output="screen">
+      <remap from="rgb/image"       to="/d400/color/image_raw"/>
+      <remap from="depth/image"     to="/d400/depth/image_rect_raw"/>
+      <remap from="rgb/camera_info" to="/d400/color/camera_info"/>
+      <remap from="rgbd_image"      to="rgbd_image"/> <!-- output -->
+      
+      <!-- Should be true for not synchronized camera topics 
+           (e.g., false for kinectv2, zed, realsense, true for xtion, kinect360)-->
+      <param name="approx_sync"       value="false"/> 
+    </node>
+  
+
+ <include file="$(find rtabmap_ros)/launch/rtabmap.launch">
+            <arg name="rtabmap_args"       value="--delete_db_on_start"/>
+
+            <arg name="frame_id"           value="d400_link"/>
+            <arg name="odom_frame_id"      value="odom"/>      
+            <arg name="rgbd_sync"		       value="true"/> 
+	          <arg name="subscribe_scan"	   value="true"/> 
+            <arg name="depth"	             value="false"/> 
+	      
+         <!--    <arg name="subscribe_rgbd"	   value="true"/> -->
+	 <!--    <arg name="subscribe_depth"    value="true"/> -->
+
+            <arg name="visual_odometry"    value="false"/>
+  
+
+
+	   <!--   <arg name="depth_camera_info_topic"      value="/d400/depth/camera_info"/> -->
+            <arg name="queue_size"         value="10"/>
+            <arg name="rviz"               value="true"/>
+            <arg name="rtabmapviz"         value="false"/>
+
+
+  <!-- RGB-D related topics -->
+
+
+
+
+
+
+
+ </include>
+
+</launch>
